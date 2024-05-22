@@ -5,8 +5,8 @@ addEventListener("load", () =>
     console.log(`Main @ ${new Date().toLocaleString()}`);
 
     const screen = document.getElementById("screen");
-    screen.width = 800;
-    screen.height = 700;
+    screen.width = 720;
+    screen.height = 720;
 
     const game = new Game(screen);
     
@@ -17,12 +17,9 @@ addEventListener("load", () =>
         const delta_time = time_stamp - previous_stamp;
         previous_stamp = time_stamp; // approximately 60 fps
 
-        game.context.clearRect(0, 0, screen.width, screen.height);
-
         //console.log(delta_time); // 1000 / 60.6 ~ 16.5
 
-        game.update(delta_time);
-        game.draw();
+        game.render(delta_time);
 
         //if (game.game_over === false)
         //{

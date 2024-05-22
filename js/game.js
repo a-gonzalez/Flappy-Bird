@@ -1,3 +1,5 @@
+import Player from "./player.js";
+
 export default class Game
 {
     constructor(screen)
@@ -16,8 +18,14 @@ export default class Game
         this.enemy_count = 25;
         this.lives = 5;
 
-        //this.setEnemyPool();
-        //this.start();
+        this.player = new Player(this);
+
+        this.resize(innerWidth, innerHeight);
+
+        addEventListener("resize", (event) =>
+        {
+            this.resize(event.currentTarget.innerWidth, event.currentTarget.innerHeight);
+        });
 
         addEventListener("keyup", (event) =>
         {
@@ -35,22 +43,12 @@ export default class Game
         });
     }
 
-    draw()
+    render(delta_time)
     {
-        /*this.enemies.forEach((enemy) =>
-        {
-            enemy.draw();
-        });
+        this.context.clearRect(0, 0, this.width, this.height);
 
-        this.setGameText();*/
-    }
-
-    update(delta_time)
-    {
-        /*this.enemies.forEach((enemy) =>
-        {
-            enemy.update(delta_time);
-        });*/
+        this.player.update(delta_time);
+        this.player.draw();
     }
 
     start()
@@ -58,6 +56,14 @@ export default class Game
         this.score = 0;
         this.lives = 5;
         this.game_over = false;
+    }
+
+    resize(width, height)
+    {
+        //console.log(`Resize: W ${width} H ${height}`);
+
+        this.screen.width = this.width = width;
+        this.screen.height = this.height = height;
     }
 
     setGameText(context)
