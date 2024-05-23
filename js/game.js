@@ -17,6 +17,9 @@ export default class Game
         this.enemies = [];
         this.enemy_count = 25;
         this.lives = 5;
+        this.gravity = 1;
+        this.height_base = 720;
+        this.ratio = this.height / this.height_base;
 
         this.player = new Player(this);
 
@@ -64,6 +67,10 @@ export default class Game
 
         this.screen.width = this.width = width;
         this.screen.height = this.height = height;
+        this.ratio = this.height / this.height_base;
+        this.gravity = 0.15 * this.ratio;
+
+        this.player.resize();
     }
 
     setGameText(context)
