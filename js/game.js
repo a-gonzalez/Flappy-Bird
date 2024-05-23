@@ -1,5 +1,6 @@
 import Background from "./background.js";
 import Player from "./player.js";
+import Gear from "./gears.js";
 
 export default class Game
 {
@@ -25,7 +26,10 @@ export default class Game
 
         this.background = new Background(this);
         this.player = new Player(this);
+        this.gears = [];
+        this.gear_count = 10;
 
+        this.setGears();
         this.resize(innerWidth, innerHeight);
 
         addEventListener("resize", (event) =>
@@ -75,6 +79,12 @@ export default class Game
         this.background.draw();
         this.player.update(delta_time);
         this.player.draw();
+        
+        this.gears.forEach((gear) =>
+        {
+            gear.update(delta_time);
+            gear.draw();
+        });
     }
 
     start()
@@ -96,6 +106,24 @@ export default class Game
 
         this.background.resize();
         this.player.resize();
+        
+        this.gears.forEach((gear) =>
+        {
+            gear.resize();
+        });
+    }
+
+    setGears()
+    {
+        this.gears = [];
+
+        const first_x = 100;
+        const spacing = 100;
+
+        for (let index = 0; index < this.gear_count; index++)
+        {
+            this.gears.push(new Gear(this, first_x + index * spacing));
+        }
     }
 
     setGameText(context)

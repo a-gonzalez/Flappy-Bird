@@ -23,10 +23,10 @@ export default class Player
         this.timer = 0;
         this.interval = 140;
 
+        this.sounds = [];
+
         this.image = new Image();
         this.image.src = "img/player.png";
-
-        this.sounds = [];
         
         this.load();
     }
@@ -97,10 +97,9 @@ export default class Player
 
     load()
     {
-        this.sounds.push(new Sound("aud/flap1.mp3"));
-        this.sounds.push(new Sound("aud/flap2.mp3"));
-        this.sounds.push(new Sound("aud/flap2.mp3"));
-        this.sounds.push(new Sound("aud/flap4.mp3"));
-        this.sounds.push(new Sound("aud/flap5.mp3"));
+        for (let index = 0; index < 5; index++)
+        {
+            this.sounds.push(new Sound(`aud/flap${index}.mp3`));
+        }
     }
 }
