@@ -1,3 +1,4 @@
+import Background from "./background.js";
 import Player from "./player.js";
 
 export default class Game
@@ -18,9 +19,11 @@ export default class Game
         this.enemy_count = 25;
         this.lives = 5;
         this.gravity = 1;
+        this.speed = 3;
         this.height_base = 720;
         this.ratio = this.height / this.height_base;
 
+        this.background = new Background(this);
         this.player = new Player(this);
 
         this.resize(innerWidth, innerHeight);
@@ -28,6 +31,24 @@ export default class Game
         addEventListener("resize", (event) =>
         {
             this.resize(event.currentTarget.innerWidth, event.currentTarget.innerHeight);
+        });
+
+        this.screen.addEventListener("mousedown", (event) =>
+        {
+            this.player.flap();
+        });
+
+        this.screen.addEventListener("touchstart", (event) =>
+        {
+            this.player.flap();
+        });
+
+        addEventListener("keydown", (evet) =>
+        {
+            if (event.key === " ")
+            {
+                this.player.flap();
+            }
         });
 
         addEventListener("keyup", (event) =>
@@ -50,6 +71,8 @@ export default class Game
     {
         this.context.clearRect(0, 0, this.width, this.height);
 
+        this.background.update(delta_time);
+        this.background.draw();
         this.player.update(delta_time);
         this.player.draw();
     }
@@ -69,7 +92,9 @@ export default class Game
         this.screen.height = this.height = height;
         this.ratio = this.height / this.height_base;
         this.gravity = 0.15 * this.ratio;
+        this.speed = 3 * this.ratio;
 
+        this.background.resize();
         this.player.resize();
     }
 

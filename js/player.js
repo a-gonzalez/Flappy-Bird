@@ -1,3 +1,5 @@
+import Sound from "./sound.js";
+
 export default class Player
 {
     constructor(game)
@@ -16,12 +18,17 @@ export default class Player
         this.y = 0;
         this.speed_x = 0;
         this.speed_y = 0;
+        this.speed_flap = 0;
 
         this.timer = 0;
         this.interval = 140;
 
         this.image = new Image();
         this.image.src = "img/player.png";
+
+        this.sounds = [];
+        
+        this.load();
     }
 
     draw()
@@ -66,10 +73,34 @@ export default class Player
         this.x = this.game.width * 0.5 - this.width * 0.5;
         this.y = this.game.height * 0.5 - this.height * 0.5;
         this.speed_y = -4 * this.game.ratio;
+        this.speed_flap = 5 * this.game.ratio;
+    }
+
+    flap()
+    {
+        if (this.isTouchingTop() === false)
+        {
+            this.speed_y = -this.speed_flap;
+            this.sounds[Math.floor(Math.random() * 5)].play();
+        }
+    }
+
+    isTouchingTop()
+    {
+        return this.y <= 0;
     }
 
     isTouchingBottom()
     {
         return this.y >= this.game.height - this.height;
+    }
+
+    load()
+    {
+        this.sounds.push(new Sound("aud/flap1.mp3"));
+        this.sounds.push(new Sound("aud/flap2.mp3"));
+        this.sounds.push(new Sound("aud/flap2.mp3"));
+        this.sounds.push(new Sound("aud/flap4.mp3"));
+        this.sounds.push(new Sound("aud/flap5.mp3"));
     }
 }
