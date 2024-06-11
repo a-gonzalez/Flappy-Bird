@@ -14,7 +14,7 @@ export default class Player
         this.frame_x = 0;
         this.frame_y = 0;
         this.frame_max = 4;
-        this.x = 20;
+        this.x = 30;
         this.y = 0;
         this.speed_x = 0;
         this.speed_y = 0;
@@ -26,9 +26,11 @@ export default class Player
         this.energy = 30;
         this.energy_min = 15;
         this.energy_max = this.energy * 2;
+        this.energy_bar_size = 0;
+        this.charging = false;
 
-        this.timer = 0;
-        this.interval = 140;
+        //this.timer = 0;
+        //this.interval = 140;
 
         this.sounds = [];
 
@@ -52,7 +54,7 @@ export default class Player
         this.collision_x = this.x + this.width * 0.5;
         this.collision_y = this.y + this.height * 0.5;
 
-        if (this.timer < this.interval)
+        /*if (this.timer < this.interval)
         {
             this.timer += delta_time;
         }
@@ -66,7 +68,7 @@ export default class Player
             {
                 this.frame_y = 0;
             }
-        }
+        }*/
         this.y += this.speed_y;
 
         if (this.isTouchingBottom() === false)
@@ -78,7 +80,7 @@ export default class Player
         {
             this.y = this.game.height - this.height;
         }
-        //this.energizer();
+        this.energizer();
     }
 
     resize()
@@ -91,10 +93,13 @@ export default class Player
         this.speed_flap = 5 * this.game.ratio;
         this.collision_radius = this.width * 0.5;
         this.collided = false;
+        this.energy_bar_size = Math.ceil(5 * this.game.ratio);
     }
 
     flap()
     {
+        this.stopCharge();
+
         if (this.isTouchingTop() === false)
         {
             this.speed_y = -this.speed_flap;
@@ -102,16 +107,38 @@ export default class Player
         }
     }
 
-    charge()
+    startCharge()
     {
-
+        this.charging = true;
+        this.game.speed = this.game.speed_max;
+        this.sounds[5].play();
     }
+
+    stopCharge()
+    {
+        this.charging = false;
+        this.game.speed = this.game.speed_min;
+    } 
 
     energizer()
     {
-        if (this.energy < this.energy_max)
+        if (this.game.update === true)
         {
-            this.energy += 0.1;
+            if (this.energy < this.energy_max)
+            {
+                this.energy += 0.1;
+            }
+
+            if (this.charging === true)
+            {
+                this.energy -= 1;
+
+                if (this.energy <= 0)
+                {
+                    this.energy = 0;
+                    this.stopCharge();
+                }
+            }
         }
     }
 
@@ -131,5 +158,6 @@ export default class Player
         {
             this.sounds.push(new Sound(`aud/flap${index}.mp3`));
         }
+        this.sounds.push(new Sound(`aud/charge.mp3`));
     }
 }

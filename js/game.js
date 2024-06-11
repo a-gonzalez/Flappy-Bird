@@ -16,12 +16,14 @@ export default class Game
         this.score_win = 20;
         this.game_over = false;
         this.debug = false;
-        //this.lives = 5;
         this.gravity = 0;
         this.speed = 0;
         this.speed_max = 0;
         this.speed_min = 0;
+        this.time = 0;
         this.timer = 0;
+        this.interval = 150;
+        this.update = false;
         this.height_base = 720;
         this.ratio = this.height / this.height_base;
         this.messages = [];
@@ -29,7 +31,7 @@ export default class Game
         this.background = new Background(this);
         this.player = new Player(this);
         this.gears = [];
-        this.gear_count = 3;
+        this.gear_count = 5;
 
         this.setGears();
         this.resize(innerWidth, innerHeight);
@@ -55,6 +57,11 @@ export default class Game
             {
                 this.player.flap();
             }
+
+            if (event.key === "c")
+            {
+                this.player.startCharge();
+            }
         });
 
         addEventListener("keyup", (event) =>
@@ -79,8 +86,10 @@ export default class Game
 
         if (this.game_over === false)
         {
-            this.timer += delta_time;
+            this.time += delta_time;
         }
+        this.handleTimer(delta_time);
+
         this.background.update(delta_time);
         this.background.draw();
 
@@ -117,9 +126,12 @@ export default class Game
         this.ratio = this.height / this.height_base;
         this.gravity = 0.15 * this.ratio;
         this.speed = 2 * this.ratio;
+        this.speed_min = this.speed;
+        this.speed_max = this.speed * 5;
 
         this.context.font = "25px comic sans ms";
-        this.context.fillStyle = "#000000" //"#b87333";
+        this.context.fillStyle = "#0000ff"; //"#b87333";
+        //this.context.strokeStyle = "#0000ff"; 
         this.context.textAlign = "left";
 
         this.background.resize();
@@ -132,7 +144,7 @@ export default class Game
 
         this.score = 0;
         this.game_over = false;
-        this.timer = 0;
+        this.time = 0;
     }
 
     setGears()
@@ -148,9 +160,23 @@ export default class Game
         }
     }
 
+    handleTimer(delta_time)
+    {
+        if (this.timer > this.interval)
+        {
+            this.timer += delta_time;
+        }
+        else
+        {
+            //this.timer = 0;
+            this.timer = this.timer % this.interval;
+            this.update = true;
+        }
+    }
+
     getTime()
     {
-        return (this.timer * 0.001).toFixed(2);
+        return (this.time * 0.001).toFixed(2);
     }
 
     setGameText(context)
@@ -159,16 +185,6 @@ export default class Game
         this.context.fillText(`Score  ${this.score}`, 10, 40);
         this.context.fillText(`Timer: ${this.getTime()}`, 10, 70);
         //this.context.fillText("Lives", 10, 70);
-
-        /*for (let index = 0; index < this.lives_max; index++)
-        {
-            this.context.strokeRect(90 + 15 * index, 55, 10, 15);
-        }
-
-        for (let index = 0; index < this.lives; index++)
-        {
-            this.context.fillRect(90 + 15 * index, 55, 10, 15);
-        }*/
 
         if (this.game_over === true)
         {
@@ -185,30 +201,32 @@ export default class Game
             this.messages.push("Press R to try again!");
 
             this.context.textAlign = "center";
-            this.context.shadowColor = "#000000"; //"#70b596";
-
             this.context.fillText(this.messages[0], this.width * 0.5, this.height * 0.5 + 40);
             this.context.fillText(this.messages[1], this.width * 0.5, this.height * 0.5 + 70);
             this.context.fillText(this.messages[2], this.width * 0.5, this.height * 0.5 + 130);
 
             this.context.fillStyle = "#ff0000";
             this.context.font = "60px comic sans ms";
-            this.context.shadowOffsetX = 3;
+            this.context.shadowOffsetX = 3; 
             this.context.shadowOffsetY = 3;
+            this.context.shadowColor = "#000000"; //"#70b596";
 
             this.context.fillText("Game Over!", this.width * 0.5, this.height * 0.5 - 40);
         }
+        if (this.player.energy <= 20)
+        {
+            this.context.fillStyle = "#ff0000";
+        }
+        else if (this.player.energy >= this.player.energy_max)
+        {
+            this.context.fillStyle = "#ff7f00";
+        }
+
+        for (let index = 0; index < this.player.energy; index++)
+        {
+            this.context.fillRect(10, this.height - 10 - this.player.energy_bar_size * index, this.player.energy_bar_size * 5, this.player.energy_bar_size);
+        }
         this.context.restore();
-
-        for (let index = 0; index < this.player.energy; index++)
-        {
-            this.context.strokeRect(15 + 15 * index, 80, 10, 15);
-        }
-
-        for (let index = 0; index < this.player.energy; index++)
-        {
-            this.context.fillRect(15 + 15 * index, 80, 10, 15);
-        }
     }
 
     /*isCollision(a, b)
