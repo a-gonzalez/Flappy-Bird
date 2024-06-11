@@ -27,5 +27,5 @@ addEventListener("load", () =>
         //}
     };
 
-    animate(0);
+    //animate(0);
 });

@@ -40,11 +40,3 @@ export default class Background
         this.x = 0;
     }
 }
-
-class Layer
-{
-    constructor()
-    {
-
-    }
-}
