@@ -24,6 +24,8 @@ export default class Game
         this.timer = 0;
         this.interval = 150;
         this.update = false;
+        this.swipe_start_x = 0;
+        this.swipe_distance = 50;
         this.height_base = 720;
         this.ratio = this.height / this.height_base;
         this.messages = [];
@@ -48,7 +50,17 @@ export default class Game
 
         this.screen.addEventListener("touchstart", (event) =>
         {
+            this.swipe_start_x = event.changedTouches[0].pageX;
+
             this.player.flap();
+        });
+
+        this.screen.addEventListener("touchmove", (event) =>
+        {
+            if (event.changedTouches[0].pageX - this.swipe_start_x > this.swipe_distance)
+            {
+                this.player.startCharge();
+            }
         });
 
         addEventListener("keydown", (evet) =>
@@ -201,9 +213,9 @@ export default class Game
             this.messages.push("Press R to try again!");
 
             this.context.textAlign = "center";
-            this.context.fillText(this.messages[0], this.width * 0.5, this.height * 0.5 + 40);
-            this.context.fillText(this.messages[1], this.width * 0.5, this.height * 0.5 + 70);
-            this.context.fillText(this.messages[2], this.width * 0.5, this.height * 0.5 + 130);
+            this.context.fillText(this.messages[0], this.width * 0.5, this.height * 0.5 + 30);
+            this.context.fillText(this.messages[1], this.width * 0.5, this.height * 0.5 + 60);
+            this.context.fillText(this.messages[2], this.width * 0.5, this.height * 0.5 + 120);
 
             this.context.fillStyle = "#ff0000";
             this.context.font = "60px comic sans ms";
@@ -213,6 +225,9 @@ export default class Game
 
             this.context.fillText("Game Over!", this.width * 0.5, this.height * 0.5 - 40);
         }
+        this.context.restore();
+
+        this.context.save();
         if (this.player.energy <= 20)
         {
             this.context.fillStyle = "#ff0000";

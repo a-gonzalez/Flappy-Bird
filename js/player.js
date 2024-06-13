@@ -126,12 +126,12 @@ export default class Player
         {
             if (this.energy < this.energy_max)
             {
-                this.energy += 0.1;
+                this.energy += 1;
             }
 
             if (this.charging === true)
             {
-                this.energy -= 1;
+                this.energy -= 4;
 
                 if (this.energy <= 0)
                 {
@@ -158,6 +158,8 @@ export default class Player
         {
             this.sounds.push(new Sound(`aud/flap${index}.mp3`));
         }
-        this.sounds.push(new Sound(`aud/charge.mp3`));
+        this.sounds.push(new Sound("aud/charge.mp3"));
+        this.sounds.push(new Sound("aud/lose.mp3"));
+        this.sounds.push(new Sound("aud/charge.mp3"));
     }
 }
