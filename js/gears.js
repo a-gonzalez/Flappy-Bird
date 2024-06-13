@@ -38,12 +38,19 @@ export default class Gear
         this.collision_x = this.x + this.width * 0.5;
         this.collision_y = this.y + this.height * 0.5;
 
-        if (this.y <= 0 || this.y >= this.game.height - this.height)
+        if (this.game.game_over === false)
         {
-            this.speed_y *= -1;
+            if (this.y <= 0 || this.y >= this.game.height - this.height)
+            {
+                this.speed_y *= -1;
+            }
+        }
+        else
+        {
+            this.speed_y += 0.1;
         }
 
-        if (this.isOffScreen() === true)
+        if (this.isOffScreen() === true && this.game.game_over === false)
         {
             this.remove = true;
 
@@ -64,6 +71,7 @@ export default class Gear
         {
             this.game.game_over = true;
             this.game.player.collided = true;
+            this.game.player.stopCharge();
         }
     }
 
@@ -79,6 +87,6 @@ export default class Gear
 
     isOffScreen()
     {
-        return this.x < -this.width;
+        return this.x < -this.width || this.y > this.game.height;
     }
 }

@@ -28,10 +28,6 @@ export default class Player
         this.energy_max = this.energy * 2;
         this.energy_bar_size = 0;
         this.charging = false;
-
-        //this.timer = 0;
-        //this.interval = 140;
-
         this.sounds = [];
 
         this.image = new Image();
@@ -51,36 +47,30 @@ export default class Player
 
     update(delta_time)
     {
+        this.energizer();
+        
+        if (this.speed_y >=0)
+        {
+            this.wingsUp();
+        }
         this.collision_x = this.x + this.width * 0.5;
         this.collision_y = this.y + this.height * 0.5;
+        this.y += this.speed_y;
 
-        /*if (this.timer < this.interval)
+        if (this.isTouchingBottom() === false && this.charging === false)
         {
-            this.timer += delta_time;
+            this.speed_y += this.game.gravity;
         }
         else
         {
-            this.timer = 0;
-
-            ++this.frame_y;
-
-            if (this.frame_y >= this.frame_max)
-            {
-                this.frame_y = 0;
-            }
-        }*/
-        this.y += this.speed_y;
-
-        if (this.isTouchingBottom() === false)
-        {
-            this.speed_y += this.game.gravity;
+            this.speed_y = 0;
         }
 
         if (this.isTouchingBottom() === true)
         {
             this.y = this.game.height - this.height;
+            this.wingsIdle();
         }
-        this.energizer();
     }
 
     resize()
@@ -89,11 +79,14 @@ export default class Player
         this.height = this.height_default * this.game.ratio;
         //this.x = 20; //this.game.width * 0.5 - this.width * 0.5;
         this.y = this.game.height * 0.5 - this.height * 0.5;
-        this.speed_y = -4 * this.game.ratio;
+        this.speed_y = -8 * this.game.ratio;
         this.speed_flap = 5 * this.game.ratio;
+        this.collision_x = this.x + this.width * 0.5;
         this.collision_radius = this.width * 0.5;
         this.collided = false;
         this.energy_bar_size = Math.ceil(5 * this.game.ratio);
+        this.frame_y = 0;
+        this.charging = false;
     }
 
     flap()
@@ -104,6 +97,7 @@ export default class Player
         {
             this.speed_y = -this.speed_flap;
             this.sounds[Math.floor(Math.random() * 5)].play();
+            this.wingsDown();
         }
     }
 
@@ -111,12 +105,15 @@ export default class Player
     {
         this.charging = true;
         this.game.speed = this.game.speed_max;
+
         this.sounds[5].play();
+        this.wingsCharge();
     }
 
     stopCharge()
     {
         this.charging = false;
+        this.frame_y = 0;
         this.game.speed = this.game.speed_min;
     } 
 
@@ -142,6 +139,32 @@ export default class Player
         }
     }
 
+    wingsIdle()
+    {
+        this.frame_y = 0;
+    }
+
+    wingsDown()
+    {
+        if (this.charging === false)
+        {
+            this.frame_y = 1;
+        }
+    }
+
+    wingsUp()
+    {
+        if (this.charging === false)
+        {
+            this.frame_y = 2;
+        }
+    }
+
+    wingsCharge()
+    {
+        this.frame_y = 3;
+    }
+
     isTouchingTop()
     {
         return this.y <= 0;
@@ -160,6 +183,6 @@ export default class Player
         }
         this.sounds.push(new Sound("aud/charge.mp3"));
         this.sounds.push(new Sound("aud/lose.mp3"));
-        this.sounds.push(new Sound("aud/charge.mp3"));
+        this.sounds.push(new Sound("aud/win.mp3"));
     }
 }

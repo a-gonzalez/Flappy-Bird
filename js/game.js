@@ -48,6 +48,11 @@ export default class Game
             this.player.flap();
         });
 
+        this.screen.addEventListener("mouseup", (event) =>
+        {
+            this.player.wingsUp();
+        });
+
         this.screen.addEventListener("touchstart", (event) =>
         {
             this.swipe_start_x = event.changedTouches[0].pageX;
@@ -80,6 +85,10 @@ export default class Game
         {
             switch (event.key)
             {
+                case " " :
+                {
+                    this.player.wingsUp(); break;
+                }
                 case "R" :
                 {
                     this.start(); break;
@@ -204,11 +213,15 @@ export default class Game
             {
                 this.messages.push("Getting Rusty?!");
                 this.messages.push(`Collision time was ${this.getTime()} seconds.`);
+
+                this.player.sounds[6].play();
             }
             else if (this.gears.length <= 0)
             {
                 this.messages.push("Nailed It!");
                 this.messages.push(`Can you beat ${this.getTime()} seconds?`);
+
+                this.player.sounds[7].play();
             }
             this.messages.push("Press R to try again!");
 
