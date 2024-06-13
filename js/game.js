@@ -28,6 +28,7 @@ export default class Game
         this.swipe_distance = 50;
         this.height_base = 720;
         this.ratio = this.height / this.height_base;
+        this.margin_bottom = 0;
         this.messages = [];
 
         this.background = new Background(this);
@@ -145,6 +146,7 @@ export default class Game
         this.screen.width = this.width = width;
         this.screen.height = this.height = height;
         this.ratio = this.height / this.height_base;
+        this.margin_bottom = Math.floor(50 * this.ratio);
         this.gravity = 0.15 * this.ratio;
         this.speed = 2 * this.ratio;
         this.speed_min = this.speed;
@@ -200,6 +202,30 @@ export default class Game
         return (this.time * 0.001).toFixed(2);
     }
 
+    setGameOver()
+    {
+        if (this.game_over === false)
+        {
+            this.game_over = true;
+
+            if (this.gears.length <= 0)
+            {
+                this.player.sounds[7].play();
+
+                this.messages.push("Nailed It!");
+                this.messages.push(`Can you beat ${this.getTime()} seconds?`);
+            }
+            else
+            {
+                this.player.sounds[6].play();
+
+                this.messages.push("Getting Rusty?!");
+                this.messages.push(`Collision time was ${this.getTime()} seconds.`);
+            }
+            this.messages.push("Press R to try again!");
+        }
+    }
+
     setGameText(context)
     {
         this.context.save();
@@ -209,22 +235,6 @@ export default class Game
 
         if (this.game_over === true)
         {
-            if (this.player.collided === true)
-            {
-                this.messages.push("Getting Rusty?!");
-                this.messages.push(`Collision time was ${this.getTime()} seconds.`);
-
-                this.player.sounds[6].play();
-            }
-            else if (this.gears.length <= 0)
-            {
-                this.messages.push("Nailed It!");
-                this.messages.push(`Can you beat ${this.getTime()} seconds?`);
-
-                this.player.sounds[7].play();
-            }
-            this.messages.push("Press R to try again!");
-
             this.context.textAlign = "center";
             this.context.fillText(this.messages[0], this.width * 0.5, this.height * 0.5 + 30);
             this.context.fillText(this.messages[1], this.width * 0.5, this.height * 0.5 + 60);

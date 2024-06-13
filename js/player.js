@@ -40,9 +40,9 @@ export default class Player
     {
         this.game.context.drawImage(this.image, this.frame_x * this.width_default, this.frame_y * this.height_default, this.width_default, this.height_default, this.x, this.y, this.width, this.height);
 
-        this.game.context.beginPath();
+        /*this.game.context.beginPath();
         this.game.context.arc(this.collision_x, this.collision_y, this.collision_radius, 0, Math.PI * 2);
-        this.game.context.stroke();
+        this.game.context.stroke();*/
     }
 
     update(delta_time)
@@ -68,7 +68,7 @@ export default class Player
 
         if (this.isTouchingBottom() === true)
         {
-            this.y = this.game.height - this.height;
+            this.y = this.game.height - this.height - this.game.margin_bottom;
             this.wingsIdle();
         }
     }
@@ -103,11 +103,17 @@ export default class Player
 
     startCharge()
     {
-        this.charging = true;
-        this.game.speed = this.game.speed_max;
-
-        this.sounds[5].play();
-        this.wingsCharge();
+        if (this.energy >= this.energy_min && this.charging === false)
+        {
+            this.charging = true;
+            this.game.speed = this.game.speed_max;
+            this.wingsCharge();
+            this.sounds[5].play();
+        }
+        else
+        {
+            this.stopCharge();
+        }
     }
 
     stopCharge()
@@ -141,7 +147,10 @@ export default class Player
 
     wingsIdle()
     {
-        this.frame_y = 0;
+        if (this.charging === false)
+        {
+            this.frame_y = 0;
+        }
     }
 
     wingsDown()
@@ -172,7 +181,7 @@ export default class Player
 
     isTouchingBottom()
     {
-        return this.y >= this.game.height - this.height;
+        return this.y >= this.game.height - this.height - this.game.margin_bottom;
     }
 
     load()
@@ -181,8 +190,8 @@ export default class Player
         {
             this.sounds.push(new Sound(`aud/flap${index}.mp3`));
         }
-        this.sounds.push(new Sound("aud/charge.mp3"));
-        this.sounds.push(new Sound("aud/lose.mp3"));
-        this.sounds.push(new Sound("aud/win.mp3"));
+        this.sounds.push(new Sound("aud/charge.mp3")); // 5
+        this.sounds.push(new Sound("aud/lose.mp3")); // 6
+        this.sounds.push(new Sound("aud/win.mp3")); // 7
     }
 }

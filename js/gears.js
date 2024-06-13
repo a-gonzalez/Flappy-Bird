@@ -26,9 +26,9 @@ export default class Gear
         this.game.context.drawImage(this.image, this.frame_x * this.width_default, this.frame_y * this.height_default, this.width_default, this.height_default, this.x, this.y, this.width, this.height);
 
         //this.game.context.strokeRect(this.x, this.y, this.width, this.height);
-        this.game.context.beginPath();
+        /*this.game.context.beginPath();
         this.game.context.arc(this.collision_x, this.collision_y, this.collision_radius, 0, Math.PI * 2);
-        this.game.context.stroke();
+        this.game.context.stroke();*/
     }
 
     update(delta_time)
@@ -63,15 +63,17 @@ export default class Gear
 
             if (this.game.gears.length <= 0)
             {
-                this.game.game_over = true;
+                this.game.setGameOver();
             }
         }
 
         if (this.game.isCollision(this, this.game.player))
         {
-            this.game.game_over = true;
             this.game.player.collided = true;
             this.game.player.stopCharge();
+
+            //this.game.player.sounds[6].play();
+            this.game.setGameOver();
         }
     }
 
